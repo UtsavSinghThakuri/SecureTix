@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureTix - PKI-Based Event Ticketing</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-shield-lock-fill"></i> SecureTix
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link active" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="how-it-works.html">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-primary ms-2" href="register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="container">
+            <div class="row align-items-center min-vh-75">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <h1 class="hero-title">Secure Event Ticketing with PKI Technology</h1>
+                        <p class="hero-subtitle">Experience the future of ticket security. Every ticket cryptographically signed, verified, and protected against fraud.</p>
+                        <div class="hero-badges mb-4">
+                            <span class="security-badge"><i class="bi bi-shield-check"></i> PKI Secured</span>
+                            <span class="security-badge"><i class="bi bi-lock-fill"></i> Encrypted</span>
+                            <span class="security-badge"><i class="bi bi-patch-check-fill"></i> Verified</span>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="events.html" class="btn btn-primary btn-lg me-3">Browse Events</a>
+                            <a href="how-it-works.html" class="btn btn-outline-light btn-lg">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image-container">
+                        <div class="floating-card">
+                            <i class="bi bi-shield-lock-fill security-icon"></i>
+                            <h3>Bank-Grade Security</h3>
+                            <p>RSA-2048 encryption for every ticket</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Why SecureTix?</h2>
+                <p class="section-subtitle">Advanced cryptography meets seamless user experience</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-fingerprint"></i>
+                        </div>
+                        <h3>Digital Certificates</h3>
+                        <p>Each user receives a unique digital certificate issued by our trusted Certificate Authority, ensuring authentic identity verification.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-pencil-square"></i>
+                        </div>
+                        <h3>Cryptographic Signing</h3>
+                        <p>Every ticket is digitally signed with your private key, providing non-repudiation and proof of ownership.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-shield-check"></i>
+                        </div>
+                        <h3>Instant Verification</h3>
+                        <p>Verify ticket authenticity in seconds using public key infrastructure and signature validation.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-lock-fill"></i>
+                        </div>
+                        <h3>End-to-End Encryption</h3>
+                        <p>Ticket data encrypted during transmission using hybrid AES-RSA encryption for maximum security.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-x-octagon"></i>
+                        </div>
+                        <h3>Fraud Prevention</h3>
+                        <p>Prevent counterfeiting, duplication, and unauthorized transfers with cryptographic integrity checks.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="bi bi-clock-history"></i>
+                        </div>
+                        <h3>Audit Trail</h3>
+                        <p>Complete transaction history with timestamped logs and certificate revocation list (CRL) checking.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Events Section -->
+    <section class="events-section py-5">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Featured Events</h2>
+                <p class="section-subtitle">Upcoming concerts, sports, and entertainment</p>
+            </div>
+            <div class="row g-4" id="featuredEvents">
+                <!-- Events will be loaded dynamically -->
+            </div>
+            <div class="text-center mt-4">
+                <a href="events.html" class="btn btn-primary btn-lg">View All Events</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Security Info Section -->
+    <section class="security-info-section py-5">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h2 class="section-title">Enterprise-Grade Security</h2>
+                    <p class="lead mb-4">Built on the same cryptographic principles used by banks, governments, and Fortune 500 companies.</p>
+                    <ul class="security-list">
+                        <li><i class="bi bi-check-circle-fill"></i> RSA-2048 public key cryptography</li>
+                        <li><i class="bi bi-check-circle-fill"></i> X.509 digital certificates</li>
+                        <li><i class="bi bi-check-circle-fill"></i> SHA-256 cryptographic hashing</li>
+                        <li><i class="bi bi-check-circle-fill"></i> AES-256 symmetric encryption</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Certificate revocation checking</li>
+                        <li><i class="bi bi-check-circle-fill"></i> Non-repudiation guarantees</li>
+                    </ul>
+                    <a href="how-it-works.html" class="btn btn-outline-primary">Learn About PKI</a>
+                </div>
+                <div class="col-lg-6">
+                    <div class="security-visual">
+                        <div class="security-diagram">
+                            <div class="diagram-node">
+                                <i class="bi bi-person-circle"></i>
+                                <span>User</span>
+                            </div>
+                            <div class="diagram-arrow">→</div>
+                            <div class="diagram-node">
+                                <i class="bi bi-key-fill"></i>
+                                <span>Private Key</span>
+                            </div>
+                            <div class="diagram-arrow">→</div>
+                            <div class="diagram-node">
+                                <i class="bi bi-ticket-perforated"></i>
+                                <span>Signed Ticket</span>
+                            </div>
+                            <div class="diagram-arrow">→</div>
+                            <div class="diagram-node">
+                                <i class="bi bi-shield-check"></i>
+                                <span>Verified</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section py-5">
+        <div class="container">
+            <div class="cta-card">
+                <h2>Ready to Experience Secure Ticketing?</h2>
+                <p>Join thousands of users who trust SecureTix for their event tickets</p>
+                <div class="cta-buttons">
+                    <a href="register.html" class="btn btn-light btn-lg me-3">Create Account</a>
+                    <a href="events.html" class="btn btn-outline-light btn-lg">Browse Events</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5><i class="bi bi-shield-lock-fill"></i> SecureTix</h5>
+                    <p>The world's first PKI-based event ticketing platform. Secure, verifiable, and fraud-proof.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6>Platform</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="events.html">Events</a></li>
+                        <li><a href="how-it-works.html">How It Works</a></li>
+                        <li><a href="about.html">About</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Account</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="register.html">Register</a></li>
+                        <li><a href="login.html">Login</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Support</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="contact.html#faq">FAQ</a></li>
+                        <li><a href="admin-login.html">Admin</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-2">
+                    <h6>Legal</h6>
+                    <ul class="list-unstyled">
+                        <li><a href="#">Privacy</a></li>
+                        <li><a href="#">Terms</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 SecureTix. All rights reserved. Powered by PKI Technology.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        // Load featured events on home page
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeaturedEvents();
+        });
+
+        function loadFeaturedEvents() {
+            const featuredContainer = document.getElementById('featuredEvents');
+            const events = getEvents().slice(0, 3); // Get first 3 events
+            
+            featuredContainer.innerHTML = events.map(event => `
+                <div class="col-md-4">
+                    <div class="event-card">
+                        <div class="event-image" style="background-image: url('${event.image}')"></div>
+                        <div class="event-content">
+                            <span class="event-category">${event.category}</span>
+                            <h3 class="event-title">${event.title}</h3>
+                            <p class="event-location"><i class="bi bi-geo-alt-fill"></i> ${event.location}</p>
+                            <p class="event-date"><i class="bi bi-calendar-event"></i> ${event.date}</p>
+                            <div class="event-footer">
+                                <span class="event-price">$${event.price}</span>
+                                <a href="events.html?event=${event.id}" class="btn btn-primary">Buy Tickets</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - SecureTix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="bi bi-shield-lock-fill"></i> SecureTix Admin</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="admin.html">Admin</a></li>
+                    <li class="nav-item"><a class="btn btn-outline-light ms-2" href="#" onclick="adminLogout()">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <h1 class="display-5 fw-bold mb-4"><i class="bi bi-shield-lock-fill"></i> Certificate Authority Admin Panel</h1>
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-people-fill display-4 text-primary"></i>
+                            <h3 class="mt-3" id="totalUsers">0</h3>
+                            <p class="text-muted">Total Users</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-award-fill display-4 text-success"></i>
+                            <h3 class="mt-3" id="totalCerts">0</h3>
+                            <p class="text-muted">Active Certificates</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-x-octagon-fill display-4 text-danger"></i>
+                            <h3 class="mt-3" id="revokedCount">0</h3>
+                            <p class="text-muted">Revoked Certificates</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-ticket-perforated-fill display-4 text-info"></i>
+                            <h3 class="mt-3" id="totalTickets">0</h3>
+                            <p class="text-muted">Total Tickets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="users-tab" data-bs-toggle="tab" data-bs-target="#users" type="button">
+                        <i class="bi bi-people"></i> Users
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="certs-tab" data-bs-toggle="tab" data-bs-target="#certs" type="button">
+                        <i class="bi bi-award"></i> Certificates
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="revoked-tab" data-bs-toggle="tab" data-bs-target="#revoked" type="button">
+                        <i class="bi bi-x-octagon"></i> Revocation List
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="audit-tab" data-bs-toggle="tab" data-bs-target="#audit" type="button">
+                        <i class="bi bi-clock-history"></i> Audit Logs
+                    </button>
+                </li>
+            </ul>
+
+            <div class="tab-content" id="adminTabsContent">
+                <!-- Users Tab -->
+                <div class="tab-pane fade show active" id="users" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Registered Users</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>User ID</th>
+                                            <th>Name</th>
+                                            <th>Email</th>
+                                            <th>Registered</th>
+                                            <th>Tickets</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="usersTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificates Tab -->
+                <div class="tab-pane fade" id="certs" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Issued Certificates</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Serial Number</th>
+                                            <th>Subject</th>
+                                            <th>Issued</th>
+                                            <th>Expires</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="certsTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Revoked Tab -->
+                <div class="tab-pane fade" id="revoked" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0">Certificate Revocation List (CRL)</h5>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#revokeModal">
+                                <i class="bi bi-x-circle"></i> Revoke Certificate
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Serial Number</th>
+                                            <th>Revoked Date</th>
+                                            <th>Reason</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="revokedTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Logs Tab -->
+                <div class="tab-pane fade" id="audit" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">System Audit Logs</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-sm">
+                                    <thead>
+                                        <tr>
+                                            <th>Timestamp</th>
+                                            <th>Event Type</th>
+                                            <th>User ID</th>
+                                            <th>Details</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="auditTable"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Revoke Certificate Modal -->
+    <div class="modal fade" id="revokeModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Revoke Certificate</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="revokeForm">
+                        <div class="mb-3">
+                            <label for="serialNumber" class="form-label">Certificate Serial Number</label>
+                            <input type="text" class="form-control" id="serialNumber" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="revokeReason" class="form-label">Reason</label>
+                            <select class="form-select" id="revokeReason" required>
+                                <option value="">Select reason</option>
+                                <option value="keyCompromise">Key Compromise</option>
+                                <option value="certificateHold">Certificate Hold</option>
+                                <option value="superseded">Superseded</option>
+                                <option value="cessationOfOperation">Cessation of Operation</option>
+                                <option value="privilegeWithdrawn">Privilege Withdrawn</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" onclick="revokeCert()">Revoke</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 SecureTix. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Require admin authentication
+            if (!requireAdmin()) {
+                return;
+            }
+            loadAdminData();
+        });
+
+        function loadAdminData() {
+            const users = getUsers();
+            const revokedCerts = getRevokedCertificates();
+            const auditLogs = getAuditLogs();
+
+            // Update stats
+            document.getElementById('totalUsers').textContent = users.length;
+            document.getElementById('totalCerts').textContent = users.length;
+            document.getElementById('revokedCount').textContent = revokedCerts.length;
+            
+            let totalTickets = 0;
+            users.forEach(u => totalTickets += u.tickets.length);
+            document.getElementById('totalTickets').textContent = totalTickets;
+
+            // Load tables
+            loadUsersTable(users);
+            loadCertsTable(users);
+            loadRevokedTable(revokedCerts);
+            loadAuditTable(auditLogs);
+        }
+
+        function loadUsersTable(users) {
+            const tbody = document.getElementById('usersTable');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td><code>${user.id}</code></td>
+                    <td>${user.name}</td>
+                    <td>${user.email}</td>
+                    <td>${formatDate(user.registeredAt)}</td>
+                    <td><span class="badge bg-info">${user.tickets.length}</span></td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick='viewUserDetails(${JSON.stringify(user).replace(/'/g, "\\'")})'}>
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function loadCertsTable(users) {
+            const tbody = document.getElementById('certsTable');
+            tbody.innerHTML = users.map(user => {
+                const cert = forge.pki.certificateFromPem(user.certificate);
+                const validation = validateCertificate(user.certificate);
+                return `
+                    <tr>
+                        <td><code>${cert.serialNumber}</code></td>
+                        <td>${user.name} (${user.email})</td>
+                        <td>${cert.validity.notBefore.toLocaleDateString()}</td>
+                        <td>${cert.validity.notAfter.toLocaleDateString()}</td>
+                        <td>
+                            <span class="badge bg-${validation.valid ? 'success' : 'danger'}">
+                                ${validation.valid ? 'Valid' : 'Invalid'}
+                            </span>
+                        </td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary" onclick="downloadUserCert('${user.email}')">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function loadRevokedTable(revokedCerts) {
+            const tbody = document.getElementById('revokedTable');
+            if (revokedCerts.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted">No revoked certificates</td></tr>';
+                return;
+            }
+            tbody.innerHTML = revokedCerts.map(cert => `
+                <tr>
+                    <td><code>${cert.serialNumber}</code></td>
+                    <td>${formatDate(cert.revokedAt)}</td>
+                    <td><span class="badge bg-warning">${cert.reason}</span></td>
+                </tr>
+            `).join('');
+        }
+
+        function loadAuditTable(logs) {
+            const tbody = document.getElementById('auditTable');
+            const recentLogs = logs.slice(-50).reverse();
+            tbody.innerHTML = recentLogs.map(log => `
+                <tr>
+                    <td>${formatDate(log.timestamp)}</td>
+                    <td><span class="badge bg-secondary">${log.eventType}</span></td>
+                    <td><code>${log.userId}</code></td>
+                    <td>${JSON.stringify(log.details)}</td>
+                </tr>
+            `).join('');
+        }
+
+        function viewUserDetails(user) {
+            alert(`User: ${user.name}\nEmail: ${user.email}\nRegistered: ${user.registeredAt}\nTickets: ${user.tickets.length}`);
+        }
+
+        function downloadUserCert(email) {
+            const users = getUsers();
+            const user = users.find(u => u.email === email);
+            if (user) {
+                const blob = new Blob([user.certificate], { type: 'application/x-pem-file' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = email + '_certificate.pem';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+        function revokeCert() {
+            const serialNumber = document.getElementById('serialNumber').value;
+            const reason = document.getElementById('revokeReason').value;
+
+            if (!serialNumber || !reason) {
+                showAlert('Please fill in all fields', 'warning');
+                return;
+            }
+
+            revokeCertificate(serialNumber, reason);
+            bootstrap.Modal.getInstance(document.getElementById('revokeModal')).hide();
+            showAlert('Certificate revoked successfully', 'success');
+            
+            setTimeout(() => location.reload(), 1500);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - SecureTix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="bi bi-shield-lock-fill"></i> SecureTix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="dashboard.html">Dashboard</a></li>
+                    <li class="nav-item"><a class="btn btn-outline-light ms-2" href="#" onclick="logout()">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col">
+                    <h1 class="display-5 fw-bold">Welcome, <span id="userName"></span>!</h1>
+                    <p class="text-muted">Manage your tickets and certificate</p>
+                </div>
+            </div>
+
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-ticket-perforated display-4 text-primary"></i>
+                            <h3 class="mt-3" id="ticketCount">0</h3>
+                            <p class="text-muted">Total Tickets</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-shield-check display-4 text-success"></i>
+                            <h3 class="mt-3" id="certStatus">Valid</h3>
+                            <p class="text-muted">Certificate Status</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card text-center">
+                        <div class="card-body">
+                            <i class="bi bi-calendar-check display-4 text-info"></i>
+                            <h3 class="mt-3" id="upcomingEvents">0</h3>
+                            <p class="text-muted">Upcoming Events</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="mb-0"><i class="bi bi-ticket-perforated-fill"></i> My Tickets</h4>
+                        </div>
+                        <div class="card-body">
+                            <div id="ticketsContainer">
+                                <p class="text-muted">No tickets yet. <a href="events.html">Browse events</a> to get started!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card mb-3">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-person-badge"></i> Certificate Info</h5>
+                        </div>
+                        <div class="card-body" id="certInfo"></div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-gear"></i> Quick Actions</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="window.location.href='events.html'">
+                                    <i class="bi bi-plus-circle"></i> Buy Tickets
+                                </button>
+                                <button class="btn btn-outline-primary" onclick="showVerifyModal()">
+                                    <i class="bi bi-shield-check"></i> Verify Ticket
+                                </button>
+                                <button class="btn btn-outline-secondary" onclick="exportCertificate()">
+                                    <i class="bi bi-download"></i> Export Certificate
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Ticket Details Modal -->
+    <div class="modal fade" id="ticketModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title"><i class="bi bi-ticket-detailed"></i> Ticket Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="ticketDetails"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-danger me-auto d-none" id="cancelTicketBtn" onclick="cancelCurrentTicket()">
+                        <i class="bi bi-x-circle"></i> Cancel Ticket
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="downloadTicket()">
+                        <i class="bi bi-download"></i> Download
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Verify Modal -->
+    <div class="modal fade" id="verifyModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Verify Ticket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="ticketFile" class="form-label">Upload Ticket JSON File</label>
+                        <input type="file" class="form-control" id="ticketFile" accept=".json">
+                    </div>
+                    <div id="verificationResult"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 SecureTix. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let currentTicket = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const user = getCurrentUser();
+            if (!user) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            loadDashboard(user);
+        });
+
+        function loadDashboard(user) {
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('ticketCount').textContent = user.tickets.length;
+            document.getElementById('upcomingEvents').textContent = user.tickets.filter(t => t.status === 'valid').length;
+
+            const cert = forge.pki.certificateFromPem(user.certificate);
+            const certValidation = validateCertificate(user.certificate);
+
+            document.getElementById('certStatus').textContent = certValidation.valid ? 'Valid' : 'Invalid';
+            document.getElementById('certStatus').className = certValidation.valid ? 'text-success' : 'text-danger';
+
+            document.getElementById('certInfo').innerHTML = `
+                <p class="mb-2"><strong>Serial:</strong> ${cert.serialNumber}</p>
+                <p class="mb-2"><strong>Valid Until:</strong> ${cert.validity.notAfter.toLocaleDateString()}</p>
+                <p class="mb-0"><strong>Email:</strong> ${user.email}</p>
+            `;
+
+            displayTickets(user.tickets);
+        }
+
+        function displayTickets(tickets) {
+    const container = document.getElementById('ticketsContainer');
+
+    if (tickets.length === 0) {
+        container.innerHTML = '<p class="text-muted">No tickets yet. <a href="events.html">Browse events</a> to get started!</p>';
+        return;
+    }
+
+    container.innerHTML = tickets.map(ticket => {
+        const isCancelled = ticket.status === 'cancelled';
+        const badgeClass = isCancelled ? 'bg-danger' : 'bg-success';
+
+        return `
+            <div class="card mb-3">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <h5>${ticket.eventTitle}</h5>
+                            <p class="mb-1 text-muted"><i class="bi bi-calendar"></i> ${ticket.eventDate}</p>
+                            <p class="mb-1 text-muted"><i class="bi bi-geo-alt"></i> ${ticket.eventLocation}</p>
+                            <span class="badge ${badgeClass}">${ticket.status}</span>
+                            ${isCancelled && ticket.cancelledAt ? `<div class="small text-danger mt-2"><i class="bi bi-clock-history"></i> Cancelled: ${formatDate(ticket.cancelledAt)}</div>` : ''}
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <p class="mb-2"><strong>$${ticket.price}</strong></p>
+                            <div class="d-flex gap-2 justify-content-end flex-wrap">
+                                <button class="btn btn-sm btn-primary" onclick='viewTicket(${JSON.stringify(ticket).replace(/'/g, "\\\'")})'>
+                                    View Details
+                                </button>
+                                ${!isCancelled ? `<button class="btn btn-sm btn-outline-danger" onclick="cancelTicketFromList('${ticket.ticketId}')"><i class="bi bi-x-circle"></i> Cancel</button>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+        function viewTicket(ticket) {
+            currentTicket = ticket;
+            const cancelBtn = document.getElementById('cancelTicketBtn');
+            if (cancelBtn) {
+                cancelBtn.classList.toggle('d-none', ticket.status === 'cancelled');
+            }
+            
+            document.getElementById('ticketDetails').innerHTML = `
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Ticket ID:</strong></div>
+                    <div class="col-6">${ticket.ticketId}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Event:</strong></div>
+                    <div class="col-6">${ticket.eventTitle}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Date:</strong></div>
+                    <div class="col-6">${ticket.eventDate}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Location:</strong></div>
+                    <div class="col-6">${ticket.eventLocation}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Purchased:</strong></div>
+                    <div class="col-6">${formatDate(ticket.purchaseDate)}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Price:</strong></div>
+                    <div class="col-6">$${ticket.price}</div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Status:</strong></div>
+                    <div class="col-6">
+                        <span class="badge ${ticket.status === 'cancelled' ? 'bg-danger' : 'bg-success'}">${ticket.status}</span>
+                    </div>
+                </div>
+                ${ticket.cancelledAt ? `
+                <div class="row mb-3">
+                    <div class="col-6"><strong>Cancelled At:</strong></div>
+                    <div class="col-6">${formatDate(ticket.cancelledAt)}</div>
+                </div>` : ''}
+                <div class="alert ${ticket.status === 'cancelled' ? 'alert-warning' : 'alert-success'} mt-3">
+                    <i class="bi ${ticket.status === 'cancelled' ? 'bi-exclamation-triangle' : 'bi-shield-check'}"></i>
+                    ${ticket.status === 'cancelled' ? 'This ticket has been cancelled and will fail verification.' : 'This ticket is cryptographically signed and verified'}
+                    <div class="mt-2 small">
+                        <strong>Signature:</strong> ${ticket.signature.substring(0, 50)}...
+                    </div>
+                </div>
+            `;
+
+            new bootstrap.Modal(document.getElementById('ticketModal')).show();
+        }
+
+        function downloadTicket() {
+            if (currentTicket) {
+                downloadJSON(currentTicket, currentTicket.ticketId + '.json');
+            }
+        }
+
+        function exportCertificate() {
+            const user = getCurrentUser();
+            if (user) {
+                const blob = new Blob([user.certificate], { type: 'application/x-pem-file' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = user.email + '_certificate.pem';
+                a.click();
+                URL.revokeObjectURL(url);
+            }
+        }
+
+
+function refreshDashboard() {
+    const user = getCurrentUser();
+    if (user) {
+        loadDashboard(user);
+    }
+}
+
+function cancelTicketFromList(ticketId) {
+    if (!confirm('Cancel this ticket? It will be marked as cancelled immediately.')) {
+        return;
+    }
+
+    try {
+        cancelTicket(ticketId);
+        showAlert('Ticket cancelled successfully.', 'success');
+        refreshDashboard();
+    } catch (error) {
+        showAlert(error.message, 'danger');
+    }
+}
+
+function cancelCurrentTicket() {
+    if (!currentTicket) return;
+    if (!confirm('Cancel this ticket? It will be marked as cancelled immediately.')) {
+        return;
+    }
+
+    try {
+        const updatedTicket = cancelTicket(currentTicket.ticketId);
+        currentTicket = updatedTicket;
+        showAlert('Ticket cancelled successfully.', 'success');
+        refreshDashboard();
+        viewTicket(updatedTicket);
+    } catch (error) {
+        showAlert(error.message, 'danger');
+    }
+}
+
+function showVerifyModal() {
+            new bootstrap.Modal(document.getElementById('verifyModal')).show();
+            document.getElementById('verificationResult').innerHTML = '';
+
+            document.getElementById('ticketFile').onchange = function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    try {
+                        const ticket = JSON.parse(event.target.result);
+                        forge.pki.certificateFromPem(ticket.certificate);
+                        const trustedUser = getUsers().find(u => u.certificate === ticket.certificate);
+                        if (!trustedUser) {
+                            throw new Error('Certificate is not trusted or user record not found');
+                        }
+
+                        const verification = verifyTicket(ticket, trustedUser.publicKey);
+
+                        const resultDiv = document.getElementById('verificationResult');
+                        if (verification.valid) {
+                            resultDiv.innerHTML = `
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle-fill"></i> <strong>Valid Ticket!</strong>
+                                    <p class="mb-0 mt-2">This ticket is authentic and has not been tampered with.</p>
+                                </div>
+                            `;
+                        } else {
+                            resultDiv.innerHTML = `
+                                <div class="alert alert-danger">
+                                    <i class="bi bi-x-circle-fill"></i> <strong>Invalid Ticket!</strong>
+                                    <p class="mb-0 mt-2">${verification.reason}</p>
+                                </div>
+                            `;
+                        }
+                    } catch (error) {
+                        document.getElementById('verificationResult').innerHTML = `
+                            <div class="alert alert-danger">
+                                <i class="bi bi-x-circle-fill"></i> Error: ${error.message}
+                            </div>
+                        `;
+                    }
+                };
+                reader.readAsText(file);
+            };
+        }
+    </script>
+</body>
+</html>

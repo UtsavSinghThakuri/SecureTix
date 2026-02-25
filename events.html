@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - SecureTix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="bi bi-shield-lock-fill"></i> SecureTix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="how-it-works.html">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-primary ms-2" href="register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">Browse Events</h1>
+            <p class="lead">Discover amazing events with cryptographically secured tickets</p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-4">
+                <div class="col-lg-8">
+                    <div class="input-group input-group-lg">
+                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search events...">
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <select class="form-select form-select-lg" id="categoryFilter">
+                        <option value="all">All Categories</option>
+                        <option value="Music">Music</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Conference">Conference</option>
+                        <option value="Theater">Theater</option>
+                        <option value="Food">Food & Drink</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row g-4" id="eventsContainer">
+                <!-- Events will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Purchase Modal -->
+    <div class="modal fade" id="purchaseModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Purchase Ticket</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="eventDetails"></div>
+                    <form id="purchaseForm">
+                        <div class="mb-3">
+                            <label for="purchasePin" class="form-label">Enter Your PIN to Sign Ticket</label>
+                            <input type="password" class="form-control" id="purchasePin" maxlength="6" required>
+                            <small class="text-muted">Your private key will be used to cryptographically sign this ticket</small>
+                        </div>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle-fill"></i> The ticket will be digitally signed with your private key and encrypted for secure transmission.
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="completePurchase()">
+                        <i class="bi bi-lock-fill"></i> Sign & Purchase
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer py-4 mt-5">
+        <div class="container">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 SecureTix. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+    <script src="app.js"></script>
+    <script>
+        let selectedEvent = null;
+        let allEvents = [];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEvents();
+            
+            document.getElementById('searchInput').addEventListener('input', filterEvents);
+            document.getElementById('categoryFilter').addEventListener('change', filterEvents);
+        });
+
+        function loadEvents() {
+            allEvents = getEvents();
+            displayEvents(allEvents);
+        }
+
+        function displayEvents(events) {
+            const container = document.getElementById('eventsContainer');
+            
+            if (events.length === 0) {
+                container.innerHTML = '<div class="col-12"><div class="alert alert-info">No events found matching your criteria.</div></div>';
+                return;
+            }
+            
+            container.innerHTML = events.map(event => `
+                <div class="col-md-6 col-lg-4">
+                    <div class="event-card">
+                        <div class="event-image" style="background-image: url('${event.image}')"></div>
+                        <div class="event-content">
+                            <span class="event-category">${event.category}</span>
+                            <h3 class="event-title">${event.title}</h3>
+                            <p class="event-location"><i class="bi bi-geo-alt-fill"></i> ${event.location}</p>
+                            <p class="event-date"><i class="bi bi-calendar-event"></i> ${event.date}</p>
+                            <p class="text-muted">${event.description}</p>
+                            <div class="event-footer">
+                                <span class="event-price">$${event.price}</span>
+                                <button class="btn btn-primary" onclick="showPurchaseModal('${event.id}')">
+                                    <i class="bi bi-ticket-perforated"></i> Buy Ticket
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterEvents() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            
+            let filtered = allEvents;
+            
+            if (category !== 'all') {
+                filtered = filtered.filter(e => e.category === category);
+            }
+            
+            if (searchTerm) {
+                filtered = filtered.filter(e => 
+                    e.title.toLowerCase().includes(searchTerm) ||
+                    e.description.toLowerCase().includes(searchTerm) ||
+                    e.location.toLowerCase().includes(searchTerm)
+                );
+            }
+            
+            displayEvents(filtered);
+        }
+
+        function showPurchaseModal(eventId) {
+            const user = getCurrentUser();
+            if (!user) {
+                showAlert('Please login to purchase tickets', 'warning');
+                setTimeout(() => window.location.href = 'login.html', 2000);
+                return;
+            }
+
+            selectedEvent = getEventById(eventId);
+            
+            document.getElementById('eventDetails').innerHTML = `
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <h4>${selectedEvent.title}</h4>
+                        <p class="mb-2"><i class="bi bi-geo-alt-fill"></i> ${selectedEvent.location}</p>
+                        <p class="mb-2"><i class="bi bi-calendar-event"></i> ${selectedEvent.date}</p>
+                        <h3 class="text-primary">$${selectedEvent.price}</h3>
+                    </div>
+                </div>
+            `;
+            
+            const modal = new bootstrap.Modal(document.getElementById('purchaseModal'));
+            modal.show();
+        }
+
+        function completePurchase() {
+            const pin = document.getElementById('purchasePin').value;
+            
+            if (!pin) {
+                showAlert('Please enter your PIN', 'warning');
+                return;
+            }
+
+            try {
+                showLoading(true);
+                
+                const ticket = purchaseTicket(selectedEvent.id, pin);
+                
+                showLoading(false);
+                
+                bootstrap.Modal.getInstance(document.getElementById('purchaseModal')).hide();
+                
+                showAlert('Ticket purchased successfully! Ticket ID: ' + ticket.ticketId, 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 2000);
+                
+            } catch (error) {
+                showLoading(false);
+                showAlert('Purchase failed: ' + error.message, 'danger');
+            }
+        }
+    </script>
+</body>
+</html>

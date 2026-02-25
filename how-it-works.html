@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How It Works - SecureTix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .process-step {
+            padding: 2rem;
+            border-left: 4px solid var(--primary-color);
+            margin-bottom: 2rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        body.dark-mode .process-step {
+            background: var(--dark-card);
+        }
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .diagram-box {
+            background: var(--light-bg);
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem 0;
+        }
+        body.dark-mode .diagram-box {
+            background: var(--dark-card);
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html"><i class="bi bi-shield-lock-fill"></i> SecureTix</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="how-it-works.html">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                    <li class="nav-item"><a class="btn btn-primary ms-2" href="register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="py-5 bg-primary text-white">
+        <div class="container">
+            <h1 class="display-4 fw-bold mb-3">How PKI-Based Ticketing Works</h1>
+            <p class="lead">Understanding the cryptographic technology that secures your tickets</p>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row mb-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h2 class="mb-4">The SecureTix Process</h2>
+                    <p class="lead">Our system uses Public Key Infrastructure (PKI) to ensure every ticket is authentic, tamper-proof, and verifiable.</p>
+                </div>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">1</div>
+                <h3><i class="bi bi-key-fill"></i> Key Pair Generation</h3>
+                <p>When you register, SecureTix generates a unique RSA-2048 key pair for your account:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="diagram-box">
+                            <i class="bi bi-lock-fill display-4 text-danger mb-3"></i>
+                            <h5>Private Key</h5>
+                            <p class="mb-0">Encrypted with your PIN and stored securely in your browser</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="diagram-box">
+                            <i class="bi bi-unlock-fill display-4 text-success mb-3"></i>
+                            <h5>Public Key</h5>
+                            <p class="mb-0">Shared with others to verify your signatures</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">2</div>
+                <h3><i class="bi bi-award-fill"></i> Certificate Issuance</h3>
+                <p>Our Certificate Authority (CA) issues you a digital certificate (X.509 standard) that:</p>
+                <ul>
+                    <li>Binds your identity to your public key</li>
+                    <li>Is cryptographically signed by the CA</li>
+                    <li>Contains validity period and usage constraints</li>
+                    <li>Can be verified by anyone against our CA</li>
+                </ul>
+                <div class="alert alert-info">
+                    <strong>Certificate Contents:</strong> Subject Name, Public Key, Serial Number, Issuer (CA), Validity Period, Digital Signature
+                </div>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">3</div>
+                <h3><i class="bi bi-pencil-square"></i> Ticket Signing</h3>
+                <p>When you purchase a ticket:</p>
+                <ol>
+                    <li>Ticket data is created with event details and your information</li>
+                    <li>A cryptographic hash (SHA-256) of the data is computed</li>
+                    <li>Your private key signs the hash, creating a digital signature</li>
+                    <li>The signature is attached to the ticket</li>
+                </ol>
+                <div class="diagram-box">
+                    <code>Signature = RSA_Sign(SHA256(TicketData), PrivateKey)</code>
+                </div>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">4</div>
+                <h3><i class="bi bi-lock-fill"></i> Encryption</h3>
+                <p>For secure transmission, tickets are encrypted using hybrid encryption:</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6>AES-256 (Symmetric)</h6>
+                        <p>Fast encryption of the actual ticket data</p>
+                    </div>
+                    <div class="col-md-6">
+                        <h6>RSA-2048 (Asymmetric)</h6>
+                        <p>Secure key exchange for the AES key</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="process-step">
+                <div class="step-number">5</div>
+                <h3><i class="bi bi-shield-check"></i> Verification</h3>
+                <p>Anyone can verify a ticket's authenticity:</p>
+                <ol>
+                    <li>Extract the public key from the certificate</li>
+                    <li>Validate the certificate against the CA</li>
+                    <li>Compute hash of ticket data</li>
+                    <li>Use public key to verify the signature matches the hash</li>
+                    <li>Check certificate hasn't been revoked (CRL check)</li>
+                </ol>
+                <div class="alert alert-success">
+                    <strong>Result:</strong> If verification passes, the ticket is authentic and hasn't been tampered with!
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-lg-12">
+                    <h2 class="mb-4 text-center">Security Features</h2>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-fingerprint text-primary"></i> Non-Repudiation</h5>
+                                    <p>Only you can create signatures with your private key. You can't deny creating a ticket.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-patch-check text-success"></i> Integrity</h5>
+                                    <p>Any modification to ticket data will invalidate the signature, detecting tampering.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-person-check text-info"></i> Authentication</h5>
+                                    <p>Certificates prove identity. Only the legitimate owner can sign tickets.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card h-100">
+                                <div class="card-body">
+                                    <h5><i class="bi bi-eye-slash text-warning"></i> Confidentiality</h5>
+                                    <p>Encryption ensures ticket data remains private during transmission.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-5">
+                <div class="col-lg-12">
+                    <h2 class="mb-4 text-center">Attack Prevention</h2>
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead class="table-primary">
+                                <tr>
+                                    <th>Attack Type</th>
+                                    <th>How PKI Prevents It</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Ticket Forgery</strong></td>
+                                    <td>Without the private key, attackers cannot create valid signatures</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Tampering</strong></td>
+                                    <td>Hash verification detects any changes to ticket data</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Replay Attacks</strong></td>
+                                    <td>Timestamps and unique ticket IDs prevent reuse</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Man-in-the-Middle</strong></td>
+                                    <td>Encryption protects data in transit; certificate validation ensures authenticity</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Impersonation</strong></td>
+                                    <td>Digital certificates bind identity to public keys</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="register.html" class="btn btn-primary btn-lg">Get Started with SecureTix</a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer py-4 mt-5">
+        <div class="container text-center">
+            <p class="mb-0">&copy; 2024 SecureTix. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <button class="dark-mode-toggle" id="darkModeToggle">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

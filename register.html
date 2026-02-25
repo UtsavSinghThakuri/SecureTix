@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - SecureTix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="index.html">
+                <i class="bi bi-shield-lock-fill"></i> SecureTix
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+                    <li class="nav-item"><a class="nav-link" href="events.html">Events</a></li>
+                    <li class="nav-item"><a class="nav-link" href="how-it-works.html">How It Works</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+                    <li class="nav-item"><a class="nav-link" href="contact.html">Contact</a></li>
+                    <li class="nav-item"><a class="nav-link" href="login.html">Login</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Registration Section -->
+    <section class="py-5">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="card shadow-lg">
+                        <div class="card-header bg-primary text-white">
+                            <h2 class="mb-0"><i class="bi bi-person-plus-fill"></i> Create Your Secure Account</h2>
+                        </div>
+                        <div class="card-body p-5">
+                            <div class="alert alert-info">
+                                <i class="bi bi-info-circle-fill"></i> During registration, we'll generate a unique RSA-2048 key pair and digital certificate for your account. Your private key will be encrypted and secured with a PIN.
+                            </div>
+
+                            <form id="registrationForm">
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="fullName" class="form-label">Full Name</label>
+                                        <input type="text" class="form-control" id="fullName" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="email" class="form-label">Email Address</label>
+                                        <input type="email" class="form-control" id="email" required>
+                                        <small class="text-muted"><i class="bi bi-envelope-check"></i> A verification code will be sent to this email before account creation.</small>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-4">
+                                    <div class="col-md-6">
+                                        <label for="country" class="form-label">Country</label>
+                                        <input type="text" class="form-control" id="country" value="US">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="city" class="form-label">City</label>
+                                        <input type="text" class="form-control" id="city">
+                                    </div>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="pin" class="form-label">Security PIN (6 digits)</label>
+                                    <input type="password" class="form-control" id="pin" maxlength="6" pattern="[0-9]{6}" required>
+                                    <small class="text-muted">This PIN will be used to protect your private key</small>
+                                </div>
+
+                                <div class="mb-4">
+                                    <label for="confirmPin" class="form-label">Confirm PIN</label>
+                                    <input type="password" class="form-control" id="confirmPin" maxlength="6" pattern="[0-9]{6}" required>
+                                </div>
+
+                                <div class="mb-4">
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="checkbox" id="acceptTerms" required>
+                                        <label class="form-check-label" for="acceptTerms">
+                                            I accept the terms and conditions and understand that my private key will be generated and stored securely
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-lg w-100">
+                                    <i class="bi bi-shield-lock-fill"></i> Register & Generate Certificate
+                                </button>
+                            </form>
+
+                            <div class="text-center mt-4">
+                                <p>Already have an account? <a href="login.html">Login here</a></p>
+                            </div>
+                        </div>
+                    </div>
+
+
+<!-- Email Verification OTP Modal -->
+<div class="modal fade" id="emailOtpModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-envelope-check-fill"></i> Verify Your Email</h5>
+            </div>
+            <div class="modal-body">
+                <p class="mb-2">We sent a 6-digit verification code to <strong id="otpTargetEmail"></strong>.</p>
+                <p class="text-muted small mb-3">Enter the code to complete registration and issue your digital certificate.</p>
+
+                <div id="registerOtpStatus" class="alert alert-info py-2 mb-3">
+                    Waiting for code...
+                </div>
+
+                <div class="mb-3">
+                    <label for="registerOtpCode" class="form-label">Verification Code</label>
+                    <input type="text" class="form-control form-control-lg text-center" id="registerOtpCode" inputmode="numeric" maxlength="6" placeholder="123456">
+                </div>
+
+                <div class="row g-2">
+                    <div class="col-6">
+                        <button type="button" class="btn btn-outline-secondary w-100" id="resendRegisterOtpBtn" onclick="resendRegistrationOtp()">
+                            <i class="bi bi-arrow-repeat"></i> Resend
+                        </button>
+                    </div>
+                    <div class="col-6">
+                        <button type="button" class="btn btn-primary w-100" id="verifyRegisterOtpBtn" onclick="verifyOtpAndCompleteRegistration()">
+                            <i class="bi bi-check2-circle"></i> Verify & Create
+                        </button>
+                    </div>
+                </div>
+
+                <button type="button" class="btn btn-link text-decoration-none px-0 mt-2" onclick="cancelRegistrationOtpFlow()">
+                    <i class="bi bi-x-circle"></i> Cancel registration verification
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+                    <!-- Registration Progress Modal -->
+                    <div class="modal fade" id="progressModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-body text-center p-5">
+                                    <div class="spinner-border text-primary mb-4" style="width: 4rem; height: 4rem;" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <h4 id="progressTitle">Generating RSA Key Pair...</h4>
+                                    <p class="text-muted" id="progressDescription">This may take a few seconds</p>
+                                    <div class="progress mt-4">
+                                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%" id="progressBar"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Success Modal -->
+                    <div class="modal fade" id="successModal" tabindex="-1">
+                        <div class="modal-dialog modal-dialog-centered modal-lg">
+                            <div class="modal-content">
+                                <div class="modal-header bg-success text-white">
+                                    <h5 class="modal-title"><i class="bi bi-check-circle-fill"></i> Registration Successful!</h5>
+                                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert alert-success">
+                                        <i class="bi bi-shield-check"></i> Your account has been created and your digital certificate has been issued!
+                                    </div>
+
+                                    <h6 class="mb-3">Certificate Details:</h6>
+                                    <div class="card bg-light">
+                                        <div class="card-body">
+                                            <div class="row">
+                                                <div class="col-6">
+                                                    <strong>Subject:</strong>
+                                                    <div id="certSubject" class="text-muted small"></div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <strong>Serial Number:</strong>
+                                                    <div id="certSerial" class="text-muted small"></div>
+                                                </div>
+                                            </div>
+                                            <div class="row mt-3">
+                                                <div class="col-6">
+                                                    <strong>Valid From:</strong>
+                                                    <div id="certFrom" class="text-muted small"></div>
+                                                </div>
+                                                <div class="col-6">
+                                                    <strong>Valid Until:</strong>
+                                                    <div id="certUntil" class="text-muted small"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mt-4">
+                                        <h6>Download Your Certificate:</h6>
+                                        <button class="btn btn-outline-primary me-2" onclick="downloadCertificate()">
+                                            <i class="bi bi-download"></i> Download Certificate
+                                        </button>
+                                        <button class="btn btn-outline-secondary" onclick="downloadPublicKey()">
+                                            <i class="bi bi-key"></i> Download Public Key
+                                        </button>
+                                    </div>
+
+                                    <div class="alert alert-warning mt-4">
+                                        <i class="bi bi-exclamation-triangle-fill"></i> <strong>Important:</strong> Your private key is encrypted and stored securely in your browser. Never share your PIN with anyone!
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <a href="login.html" class="btn btn-primary">Proceed to Login</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer py-4 mt-auto">
+        <div class="container">
+            <div class="text-center">
+                <p class="mb-0">&copy; 2024 SecureTix. All rights reserved. Powered by PKI Technology.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Dark Mode Toggle -->
+    <button class="dark-mode-toggle" id="darkModeToggle" title="Toggle Dark Mode">
+        <i class="bi bi-moon-fill"></i>
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/node-forge@1.3.1/dist/forge.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="app.js"></script>
+
+<script>
+    let registeredUser = null;
+    let pendingRegistrationData = null;
+    let registerOtpModalInstance = null;
+    let lastRegisterOtpResponse = null;
+
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const fullName = document.getElementById('fullName').value.trim();
+        const email = document.getElementById('email').value.trim().toLowerCase();
+        const country = document.getElementById('country').value.trim();
+        const city = document.getElementById('city').value.trim();
+        const pin = document.getElementById('pin').value;
+        const confirmPin = document.getElementById('confirmPin').value;
+
+        if (pin !== confirmPin) {
+            showAlert('PINs do not match', 'danger');
+            return;
+        }
+
+        if (pin.length !== 6 || !/^\d+$/.test(pin)) {
+            showAlert('PIN must be exactly 6 digits', 'danger');
+            return;
+        }
+
+        pendingRegistrationData = {
+            userInfo: {
+                name: fullName,
+                email: email,
+                country: country,
+                city: city
+            },
+            pin: pin
+        };
+
+        try {
+            showLoading(true);
+            const otpResponse = await requestRegistrationVerificationCode(pendingRegistrationData.userInfo);
+            showLoading(false);
+
+            lastRegisterOtpResponse = otpResponse;
+            openRegistrationOtpModal(email, otpResponse);
+            showAlert('Verification code sent. Please check your email and enter the code to continue.', 'success');
+        } catch (error) {
+            showLoading(false);
+            showAlert(error.message, 'danger');
+        }
+    });
+
+    function openRegistrationOtpModal(email, otpResponse) {
+        if (!registerOtpModalInstance) {
+            registerOtpModalInstance = new bootstrap.Modal(document.getElementById('emailOtpModal'));
+        }
+
+        document.getElementById('otpTargetEmail').textContent = email;
+        document.getElementById('registerOtpCode').value = '';
+        renderRegisterOtpStatus(otpResponse);
+        registerOtpModalInstance.show();
+    }
+
+    function renderRegisterOtpStatus(otpResponse) {
+        const status = document.getElementById('registerOtpStatus');
+        let html = '<i class="bi bi-clock-history"></i> Code valid for 5 minutes.';
+        if (otpResponse && otpResponse.delivery === 'demo' && otpResponse.demoCode) {
+            html += '<br><strong>Demo mode code:</strong> ' + otpResponse.demoCode + ' (configure EmailJS to send real email)';
+            status.className = 'alert alert-warning py-2 mb-3';
+        } else {
+            status.className = 'alert alert-info py-2 mb-3';
+        }
+        status.innerHTML = html;
+    }
+
+    async function resendRegistrationOtp() {
+        if (!pendingRegistrationData) {
+            showAlert('Please fill the registration form first.', 'warning');
+            return;
+        }
+
+        try {
+            const btn = document.getElementById('resendRegisterOtpBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Sending...';
+
+            lastRegisterOtpResponse = await requestRegistrationVerificationCode(pendingRegistrationData.userInfo);
+            renderRegisterOtpStatus(lastRegisterOtpResponse);
+            showAlert('A new verification code has been sent.', 'success');
+        } catch (error) {
+            showAlert(error.message, 'danger');
+        } finally {
+            const btn = document.getElementById('resendRegisterOtpBtn');
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Resend';
+        }
+    }
+
+    function cancelRegistrationOtpFlow() {
+        if (registerOtpModalInstance) {
+            registerOtpModalInstance.hide();
+        }
+        document.getElementById('registerOtpCode').value = '';
+    }
+
+    async function verifyOtpAndCompleteRegistration() {
+        if (!pendingRegistrationData) {
+            showAlert('Registration data is missing. Please submit the form again.', 'danger');
+            return;
+        }
+
+        const code = document.getElementById('registerOtpCode').value.trim();
+        if (!/^\d{6}$/.test(code)) {
+            showAlert('Please enter a valid 6-digit verification code.', 'danger');
+            return;
+        }
+
+        const verifyBtn = document.getElementById('verifyRegisterOtpBtn');
+        verifyBtn.disabled = true;
+        verifyBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span> Verifying...';
+
+        try {
+            verifyRegistrationCode(pendingRegistrationData.userInfo.email, code);
+            if (registerOtpModalInstance) {
+                registerOtpModalInstance.hide();
+            }
+            await completeRegistrationAfterOtp();
+        } catch (error) {
+            showAlert(error.message, 'danger');
+        } finally {
+            verifyBtn.disabled = false;
+            verifyBtn.innerHTML = '<i class="bi bi-check2-circle"></i> Verify & Create';
+        }
+    }
+
+    async function completeRegistrationAfterOtp() {
+        const progressModal = new bootstrap.Modal(document.getElementById('progressModal'));
+        progressModal.show();
+
+        try {
+            updateProgress(25, 'Generating RSA-2048 Key Pair...', 'Creating your unique cryptographic keys');
+            await sleep(900);
+
+            updateProgress(50, 'Generating Digital Certificate...', 'Creating X.509 certificate');
+            await sleep(900);
+
+            updateProgress(75, 'Encrypting Private Key...', 'Securing your private key with PIN');
+
+            registeredUser = registerUser(pendingRegistrationData.userInfo, pendingRegistrationData.pin);
+
+            updateProgress(100, 'Registration Complete!', 'Your account is ready');
+            await sleep(500);
+
+            progressModal.hide();
+            showSuccessModal(registeredUser);
+            pendingRegistrationData = null;
+        } catch (error) {
+            progressModal.hide();
+            showAlert('Registration failed: ' + error.message, 'danger');
+        }
+    }
+
+    function updateProgress(percent, title, description) {
+        document.getElementById('progressBar').style.width = percent + '%';
+        document.getElementById('progressTitle').textContent = title;
+        document.getElementById('progressDescription').textContent = description;
+    }
+
+    function showSuccessModal(user) {
+        const cert = forge.pki.certificateFromPem(user.certificate);
+
+        document.getElementById('certSubject').textContent = user.name + ' (' + user.email + ')';
+        document.getElementById('certSerial').textContent = cert.serialNumber;
+        document.getElementById('certFrom').textContent = cert.validity.notBefore.toLocaleDateString();
+        document.getElementById('certUntil').textContent = cert.validity.notAfter.toLocaleDateString();
+
+        const successModal = new bootstrap.Modal(document.getElementById('successModal'));
+        successModal.show();
+    }
+
+    function downloadCertificate() {
+        if (registeredUser) {
+            const blob = new Blob([registeredUser.certificate], { type: 'application/x-pem-file' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = registeredUser.email + '_certificate.pem';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    }
+
+    function downloadPublicKey() {
+        if (registeredUser) {
+            const blob = new Blob([registeredUser.publicKey], { type: 'application/x-pem-file' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = registeredUser.email + '_public_key.pem';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+    }
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+</script>
+
+</body>
+</html>
